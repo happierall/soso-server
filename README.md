@@ -23,8 +23,6 @@
     Router := soso.Default()
 
     Router.CREATE("message", func (m *soso.Msg) {
-      fmt.Println(m.RequestMap)
-
       m.Success(map[string]interface{}{
         "id": 1,
       })
@@ -43,6 +41,12 @@
   // Handler:
   func ChatSendMessage(m *soso.Msg) {
 
+    type request struct {
+      ID int64 `json:"id"`
+    }
+    req := &request{}
+    m.ReadRequest(req)
+
     // Send direct message:
     soso.SendMsg("notify", "created", m.Session,
       map[string]interface{}{
@@ -52,7 +56,7 @@
 
     m.Success(map[string]interface{}{
       "message": "message hi",
-      "id": m.RequestMap["id"],
+      "id": req.ID,
     })
 
   }
@@ -66,9 +70,7 @@
 ```go
 // Custom listener:
 Router := soso.Default()
-Router.Handle("message", "create", func (m *soso.Msg) {
-  fmt.Println(m.RequestMap)
-})
+Router.Handle("message", "create", func (m *soso.Msg) {})
 http.HandleFunc("/soso", Router.receiver)
 http.ListenAndServe("localhost:4000", nil)
 ```

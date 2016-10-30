@@ -20,14 +20,13 @@ type Msg struct {
 	DataType   string
 	ActionStr  string
 	LogMap     Log
-	RequestMap map[string]interface{}
-	TransMap   map[string]interface{}
+	RequestMap *json.RawMessage
+	TransMap   *json.RawMessage
 
 	Response *Response
 
 	// Client socket session, public for testing convinience
 	Session Session
-
 }
 
 func (c *Msg) Send() {
@@ -47,6 +46,16 @@ func (c *Msg) Success(ResponseMap interface{}) {
 	c.sendJSON(c.Response)
 }
 
+func (m *Msg) ReadRequest(object interface{}) error {
+	err := json.Unmarshal(*m.RequestMap, object)
+	return err
+}
+
+func (m *Msg) ReadTrans(object interface{}) error {
+	err := json.Unmarshal(*m.TransMap, object)
+	return err
+}
+
 func (c *Msg) sendJSON(data interface{}) {
 	json_data, err := json.Marshal(data)
 	if err != nil {
@@ -54,7 +63,7 @@ func (c *Msg) sendJSON(data interface{}) {
 	}
 
 	err2 := c.Session.Send(string(json_data))
-	if (err2 != nil) {
+	if err2 != nil {
 		fmt.Println("Error send msg:", err2)
 	}
 }
@@ -79,7 +88,7 @@ func SendMsg(dataType, action string, session Session, response map[string]inter
 	msg := &Msg{
 		DataType:  dataType,
 		ActionStr: action,
-		TransMap:   map[string]interface{}{},
+		TransMap:  nil,
 	}
 	msg.Session = session
 	msg.Response = NewResponse(msg)

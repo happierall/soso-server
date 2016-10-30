@@ -9,8 +9,14 @@ func init() {
 
 func UserRetrieve(m *soso.Msg) {
 
+	type request struct {
+		ID int64 `json:"id"`
+	}
+	req := &request{}
+	m.ReadRequest(req)
+
 	m.Success(map[string]interface{}{
-		"id":   m.RequestMap["id"],
+		"id":   req.ID,
 		"Name": "Mary",
 	})
 
@@ -20,7 +26,6 @@ func UserCreate(m *soso.Msg) {
 
 	m.Success(map[string]interface{}{
 		"message": "message hi",
-		"id":      m.RequestMap["id"],
 	})
 
 }

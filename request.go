@@ -37,11 +37,11 @@ import (
 
 // Request
 type Request struct {
-	ActionStr  string                 `json:"action_str"`
-	DataType   string                 `json:"data_type"`
-	LogMap     Log                    `json:"log_map"`
-	RequestMap map[string]interface{} `json:"request_map"`
-	TransMap   map[string]interface{} `json:"trans_map"`
+	ActionStr  string           `json:"action_str"`
+	DataType   string           `json:"data_type"`
+	LogMap     Log              `json:"log_map"`
+	RequestMap *json.RawMessage `json:"request_map"`
+	TransMap   *json.RawMessage `json:"trans_map"`
 }
 
 func NewRequest(msg []byte) (*Request, error) {
