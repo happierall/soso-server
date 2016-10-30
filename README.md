@@ -11,23 +11,34 @@
 
 ##Usage
 ```go
+  import (
+  	"fmt"
 
-  // Simple Use:
-  Router := soso.Default()
-  Router.CREATE("message", func (m *soso.Msg) {
-    fmt.Println(m.RequestMap)
+  	soso "github.com/happierall/soso-server"
+  )
 
-    m.Success(map[string]interface{}{
-      "id": 1
+  func main() {
+
+    // Simple Use:
+    Router := soso.Default()
+
+    Router.CREATE("message", func (m *soso.Msg) {
+      fmt.Println(m.RequestMap)
+
+      m.Success(map[string]interface{}{
+        "id": 1,
+      })
     })
-  })
-  Router.Run(4000)
+
+    Router.Run(4000)
+
+  }
 ```
 
 ```go
   // Add routes as list:
   var Routes = soso.Routes{}
-  Routes.Add("create", "message", ChatSendMessage)
+  Routes.Add("message", "create", ChatSendMessage)
 
   // Handler:
   func ChatSendMessage(m *soso.Msg) {
@@ -47,7 +58,7 @@
   }
 
   Router := soso.Default()
-  Router.HandleRoutes = Routes
+  Router.HandleRoutes(Routes)
   Router.Run(4000)
 ```
 
@@ -72,7 +83,7 @@ http.ListenAndServe("localhost:4000", nil)
         action_str: "create",
         log_map: {},
         request_map: {msg: "hello world"},
-        trans_map: {}
+        trans_map: {},
   }
 
   sock.onopen = () => {
