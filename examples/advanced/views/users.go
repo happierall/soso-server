@@ -1,4 +1,4 @@
-package users
+package views
 
 func init() {
   Routes.Add("users", "retrieve", UserRetrieve)
