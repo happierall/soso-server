@@ -14,28 +14,30 @@
 
   // Simple Use:
   Router := soso.Default()
-  Router.CREATE("message", ChatSendMessage)
+  Router.CREATE("message", func (m *soso.Msg) {
+    fmt.Println(m.RequestMap)
+
+    m.Success(map[string]interface{}{
+      "id": 1
+    })
+  })
   Router.Run(4000)
+```
 
-
+```go
   // Add routes as list:
   var Routes = soso.Routes{}
   Routes.Add("create", "message", ChatSendMessage)
 
-  Router := soso.Default()
-  Router.HandleRoutes = Routes
-  Router.Run(4000)
-
-
-  // Custom listener:
-  Router := soso.Default()
-  Router.Handle("message", "create", ChatSendMessage)
-  http.HandleFunc("/soso", Router.receiver)
-  http.ListenAndServe("localhost:4000", nil)
-
-
   // Handler:
   func ChatSendMessage(m *soso.Msg) {
+
+    // Send direct message:
+    soso.SendMsg("notify", "created", m.Session,
+      map[string]interface{}{
+        "text": "Congratulation for first message",
+      },
+    )
 
     m.Success(map[string]interface{}{
       "message": "message hi",
@@ -44,14 +46,20 @@
 
   }
 
+  Router := soso.Default()
+  Router.HandleRoutes = Routes
+  Router.Run(4000)
+```
 
-  // Send direct message:
-  soso.SendMsg("message", "created", session,
-    map[string]interface{}{
-      "id": "1",
-    },
-  )
 
+```go
+// Custom listener:
+Router := soso.Default()
+Router.Handle("message", "create", func (m *soso.Msg) {
+  fmt.Println(m.RequestMap)
+})
+http.HandleFunc("/soso", Router.receiver)
+http.ListenAndServe("localhost:4000", nil)
 ```
 
 ## Client request (if use without [soso-client](https://github.com/happierall/soso-client))
