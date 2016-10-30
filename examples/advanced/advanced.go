@@ -7,7 +7,7 @@ import (
 
 func main() {
 	Router := soso.Default()
-	Router.HandleRoutes = views.Routes
+	Router.HandleRoutes(views.Routes)
 
 	Router.Run(4000)
 }
