@@ -36,16 +36,16 @@
 ```go
   // Add routes as list:
   var Routes = soso.Routes{}
-  Routes.Add("message", "create", ChatSendMessage)
+  Routes.Add("user", "create", UserCreate)
 
   // Handler:
-  func ChatSendMessage(m *soso.Msg) {
+  func UserCreate(m *soso.Msg) {
 
-    type request struct {
+    type Data struct {
       ID int64 `json:"id"`
     }
-    req := &request{}
-    m.ReadRequest(req)
+    data := &Data{}
+    m.ReadData(data)
 
     // Send direct message:
     soso.SendMsg("notify", "created", m.Session,
@@ -55,8 +55,7 @@
     )
 
     m.Success(map[string]interface{}{
-      "message": "message hi",
-      "id": req.ID,
+      "id": data.ID,
     })
 
   }
@@ -70,7 +69,7 @@
 ```go
 // Custom listener:
 Router := soso.Default()
-Router.Handle("message", "create", func (m *soso.Msg) {})
+Router.Handle("user", "create", func (m *soso.Msg) {})
 http.HandleFunc("/soso", Router.receiver)
 http.ListenAndServe("localhost:4000", nil)
 ```
@@ -81,11 +80,11 @@ http.ListenAndServe("localhost:4000", nil)
   var sock = new WebSocket("ws://localhost:4000/soso")
 
   var data = {
-        data_type: "message",
-        action_str: "create",
-        log_map: {},
-        request_map: {msg: "hello world"},
-        trans_map: {},
+      model: "message",
+      action: "create",
+      data: {msg: "hello world"},
+      log: {},
+      other: {},
   }
 
   sock.onopen = () => {

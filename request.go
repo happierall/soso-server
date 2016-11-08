@@ -15,33 +15,32 @@ import (
        LevelStr: Level(3), // or obj of LevelError
 
        LogID: "1096",
-       UserMsg: "action_str required"
+       UserMsg: "action required"
    }
 
    resp := Request{
-      ActionStr: "retrieve",
-      DataType: "person",
-      LogMap: log
-      RequestMap: {}
-      TransMap:
+      Action: "get",
+      Model: "person",
+      Log: log,
+      Data: {},
+      Other: {}
    }
 
-   Other:
 
-    trans_map  : {
-      auth_key : "c76aa3577f8b5a60206f9d041c76034a...",
-      trans_id : "eb99ec08-7e90-400d-9585-62a1385ec158"
+    Other: {
+      AuthToken: "c76aa3577f8b5a60206f9d041c76034a...",
+      TransID: "eb99ec08-7e90-400d-9585-62a1385ec158"
     }
 
 */
 
 // Request
 type Request struct {
-	ActionStr  string           `json:"action_str"`
-	DataType   string           `json:"data_type"`
-	LogMap     Log              `json:"log_map"`
-	RequestMap *json.RawMessage `json:"request_map"`
-	TransMap   *json.RawMessage `json:"trans_map"`
+	Action string           `json:"action"`
+	Model  string           `json:"model"`
+	Log    Log              `json:"log"`
+	Data   *json.RawMessage `json:"data"`
+	Other  *json.RawMessage `json:"other"`
 }
 
 func NewRequest(msg []byte) (*Request, error) {

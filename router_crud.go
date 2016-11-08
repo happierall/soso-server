@@ -1,21 +1,25 @@
 package soso
 
-func (r *Router) CREATE(data_type string, handler HandlerFunc) {
-	r.Handle(data_type, "create", handler)
+func (r *Router) GET(model string, handler HandlerFunc) {
+	r.Handle(model, "get", handler)
 }
 
-func (r *Router) RETRIEVE(data_type string, handler HandlerFunc) {
-	r.Handle(data_type, "retrieve", handler)
+func (r *Router) SEARCH(model string, handler HandlerFunc) {
+	r.Handle(model, "search", handler)
 }
 
-func (r *Router) UPDATE(data_type string, handler HandlerFunc) {
-	r.Handle(data_type, "update", handler)
+func (r *Router) CREATE(model string, handler HandlerFunc) {
+	r.Handle(model, "create", handler)
 }
 
-func (r *Router) DELETE(data_type string, handler HandlerFunc) {
-	r.Handle(data_type, "delete", handler)
+func (r *Router) UPDATE(model string, handler HandlerFunc) {
+	r.Handle(model, "update", handler)
 }
 
-func (r *Router) FLUSH(data_type string, handler HandlerFunc) {
-	r.Handle(data_type, "flush", handler)
+func (r *Router) DELETE(model string, handler HandlerFunc) {
+	r.Handle(model, "delete", handler)
+}
+
+func (r *Router) FLUSH(model string, handler HandlerFunc) {
+	r.Handle(model, "flush", handler)
 }

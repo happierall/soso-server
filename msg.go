@@ -8,8 +8,9 @@ import (
 
 var (
 	actions = map[string]string{
+		"get":      "GOT",
 		"create":   "CREATED",
-		"retrieve": "RETRIEVED",
+		"search":   "SEARCHED"
 		"update":   "UPDATED",
 		"delete":   "DELETED",
 		"flush":    "FLUSHED",
@@ -17,11 +18,11 @@ var (
 )
 
 type Msg struct {
-	DataType   string
-	ActionStr  string
-	LogMap     Log
-	RequestMap *json.RawMessage
-	TransMap   *json.RawMessage
+	Model   string
+	Action  string
+	Data    *json.RawMessage
+	Log     Log
+	Other   *json.RawMessage
 
 	Response *Response
 
@@ -30,7 +31,7 @@ type Msg struct {
 }
 
 func (c *Msg) Send() {
-	c.Response.Log(log_code_by_action_type(c.ActionStr), LevelDebug, "")
+	c.Response.Log(log_code_by_action_type(c.Action), LevelDebug, "")
 	c.sendJSON(c.Response)
 }
 
@@ -39,20 +40,20 @@ func (c *Msg) Error(code int, level Level, err error) {
 	c.sendJSON(c.Response)
 }
 
-func (c *Msg) Success(ResponseMap interface{}) {
-	c.Response.ResponseMap = ResponseMap
-	c.Response.Log(log_code_by_action_type(c.ActionStr), LevelDebug, "")
+func (c *Msg) Success(Data interface{}) {
+	c.Response.Data = Data
+	c.Response.Log(log_code_by_action_type(c.Action), LevelDebug, "")
 
 	c.sendJSON(c.Response)
 }
 
-func (m *Msg) ReadRequest(object interface{}) error {
-	err := json.Unmarshal(*m.RequestMap, object)
+func (m *Msg) ReadData(object interface{}) error {
+	err := json.Unmarshal(*m.Data, object)
 	return err
 }
 
-func (m *Msg) ReadTrans(object interface{}) error {
-	err := json.Unmarshal(*m.TransMap, object)
+func (m *Msg) ReadOther(object interface{}) error {
+	err := json.Unmarshal(*m.Other, object)
 	return err
 }
 
@@ -70,12 +71,12 @@ func (c *Msg) sendJSON(data interface{}) {
 
 func newMsgFromRequest(req *Request, session Session) *Msg {
 	msg := &Msg{
-		DataType:   req.DataType,
-		ActionStr:  req.ActionStr,
-		Session:    session,
-		RequestMap: req.RequestMap,
-		TransMap:   req.TransMap,
-		LogMap:     req.LogMap,
+		Model:   req.Model,
+		Action:  req.Action,
+		Session: session,
+		Data:    req.Data,
+		Log:     req.Log,
+		Other:   req.Other,
 	}
 	msg.Response = NewResponse(msg)
 
@@ -84,29 +85,29 @@ func newMsgFromRequest(req *Request, session Session) *Msg {
 	return msg
 }
 
-func SendMsg(dataType, action string, session Session, response map[string]interface{}) {
+func SendMsg(mode, action string, session Session, data map[string]interface{}) {
 	msg := &Msg{
-		DataType:  dataType,
-		ActionStr: action,
-		TransMap:  nil,
+		Model:  model,
+		Action: action,
+		Other:  nil,
 	}
 	msg.Session = session
 	msg.Response = NewResponse(msg)
-	msg.Response.ResponseMap = response
+	msg.Response.Data = data
 
 	msg.Send()
 }
 
-func reverse_action_type(action_str string) string {
-	act, ok := actions[action_str]
+func reverse_action_type(action string) string {
+	act, ok := actions[action]
 	if !ok {
-		act = strings.ToUpper(action_str)
+		act = strings.ToUpper(action)
 	}
 	return act
 }
 
-func log_code_by_action_type(action_str string) int {
-	if action_str == "create" {
+func log_code_by_action_type(action string) int {
+	if action == "create" {
 		return 201
 	}
 	return 200
