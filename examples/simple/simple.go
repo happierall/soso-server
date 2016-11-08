@@ -1,8 +1,13 @@
 package main
 
-import soso "github.com/happierall/soso-server"
+import (
+	"fmt"
+
+	soso "github.com/happierall/soso-server"
+)
 
 func main() {
+
 	Router := soso.Default()
 
 	Router.CREATE("message", func(m *soso.Msg) {
@@ -11,5 +16,5 @@ func main() {
 		})
 	})
 
-	Router.Run(4000)
+	fmt.Println(Router.Run(4000))
 }
