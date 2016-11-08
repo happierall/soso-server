@@ -92,6 +92,7 @@ func SendMsg(model, action string, session Session, data map[string]interface{})
 	}
 	msg.Session = session
 	msg.Response = NewResponse(msg)
+	msg.Response.Other = map[string]interface{}{}
 	msg.Response.Data = data
 
 	msg.Send()
