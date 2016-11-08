@@ -27,7 +27,7 @@ const (
 )
 
 var (
-	LastLogID int = 0
+	LastLogID int = 1
 )
 
 var levels = [...]string{

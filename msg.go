@@ -18,12 +18,7 @@ var (
 )
 
 type Msg struct {
-	Model  string
-	Action string
-	Data   *json.RawMessage
-	Log    Log
-	Other  *json.RawMessage
-
+	Request  *Request
 	Response *Response
 
 	// Client socket session, public for testing convinience
@@ -31,29 +26,35 @@ type Msg struct {
 }
 
 func (c *Msg) Send() {
-	c.Response.Log(log_code_by_action_type(c.Action), LevelDebug, "")
+	if c.Response.Log.LogID == "0" {
+		c.Response.NewLog(log_code_by_action_type(c.Request.Action), LevelInfo, "")
+	}
 	c.sendJSON(c.Response)
 }
 
 func (c *Msg) Error(code int, level Level, err error) {
-	c.Response.Log(code, level, err.Error())
+	c.Response.NewLog(code, level, err.Error())
 	c.sendJSON(c.Response)
 }
 
 func (c *Msg) Success(Data interface{}) {
 	c.Response.Data = Data
-	c.Response.Log(log_code_by_action_type(c.Action), LevelDebug, "")
+	c.Response.NewLog(log_code_by_action_type(c.Request.Action), LevelInfo, "")
 
 	c.sendJSON(c.Response)
 }
 
+func (m *Msg) Log(code_key int, lvl_str Level, user_msg string) {
+	m.Response.NewLog(code_key, lvl_str, user_msg)
+}
+
 func (m *Msg) ReadData(object interface{}) error {
-	err := json.Unmarshal(*m.Data, object)
+	err := json.Unmarshal(*m.Request.Data, object)
 	return err
 }
 
 func (m *Msg) ReadOther(object interface{}) error {
-	err := json.Unmarshal(*m.Other, object)
+	err := json.Unmarshal(*m.Request.Other, object)
 	return err
 }
 
@@ -71,12 +72,8 @@ func (c *Msg) sendJSON(data interface{}) {
 
 func newMsgFromRequest(req *Request, session Session) *Msg {
 	msg := &Msg{
-		Model:   req.Model,
-		Action:  req.Action,
+		Request: req,
 		Session: session,
-		Data:    req.Data,
-		Log:     req.Log,
-		Other:   req.Other,
 	}
 	msg.Response = NewResponse(msg)
 
@@ -85,11 +82,13 @@ func newMsgFromRequest(req *Request, session Session) *Msg {
 	return msg
 }
 
-func SendMsg(mode, action string, session Session, data map[string]interface{}) {
+func SendMsg(model, action string, session Session, data map[string]interface{}) {
 	msg := &Msg{
-		Model:  model,
-		Action: action,
-		Other:  nil,
+		Request: &Request{
+			Model:  model,
+			Action: action,
+			Other:  nil,
+		},
 	}
 	msg.Session = session
 	msg.Response = NewResponse(msg)

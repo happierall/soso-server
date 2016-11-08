@@ -41,13 +41,13 @@ type Response struct {
 
 func NewResponse(msg *Msg) *Response {
 	return &Response{
-		Action: reverse_action_type(msg.Action),
-		Model:  msg.Model,
-		Other:  msg.Other,
+		Action: reverse_action_type(msg.Request.Action),
+		Model:  msg.Request.Model,
+		Other:  msg.Request.Other,
 	}
 }
 
-func (r *Response) Log(code_key int, lvl_str Level, user_msg string) *Response {
+func (r *Response) NewLog(code_key int, lvl_str Level, user_msg string) *Response {
 	r.Log = NewLog(code_key, lvl_str, user_msg)
 	return r
 }
