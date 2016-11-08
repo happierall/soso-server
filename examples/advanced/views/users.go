@@ -13,7 +13,7 @@ func UserGet(m *soso.Msg) {
 		ID int64 `json:"id"`
 	}
 	data := &Data{}
-	m.ReadRequest(data)
+	m.ReadData(data)
 
 	m.Success(map[string]interface{}{
 		"id":   data.ID,
