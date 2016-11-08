@@ -8,21 +8,21 @@ import (
 
 var (
 	actions = map[string]string{
-		"get":      "GOT",
-		"create":   "CREATED",
-		"search":   "SEARCHED"
-		"update":   "UPDATED",
-		"delete":   "DELETED",
-		"flush":    "FLUSHED",
+		"get":    "GOT",
+		"create": "CREATED",
+		"search": "SEARCHED",
+		"update": "UPDATED",
+		"delete": "DELETED",
+		"flush":  "FLUSHED",
 	}
 )
 
 type Msg struct {
-	Model   string
-	Action  string
-	Data    *json.RawMessage
-	Log     Log
-	Other   *json.RawMessage
+	Model  string
+	Action string
+	Data   *json.RawMessage
+	Log    Log
+	Other  *json.RawMessage
 
 	Response *Response
 
