@@ -67,7 +67,6 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 	found := false
 
 	for _, route := range r.Routes {
-		fmt.Println(req.Action, route.Action, req.Model, route.Model)
 		if req.Action == route.Action && req.Model == route.Model {
 
 			startTime := time.Now()
