@@ -70,7 +70,7 @@
 // Custom listener:
 Router := soso.Default()
 Router.Handle("user", "create", func (m *soso.Msg) {})
-http.HandleFunc("/soso", Router.receiver)
+http.HandleFunc("/soso", Router.Receiver)
 http.ListenAndServe("localhost:4000", nil)
 ```
 

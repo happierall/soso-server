@@ -45,12 +45,12 @@ func (s *Engine) RunReceiver(session Session) {
 	}
 }
 
-func (s *Engine) receiver(w http.ResponseWriter, r *http.Request) {
+func (s *Engine) Receiver(w http.ResponseWriter, r *http.Request) {
 	SosoWebsocketReceiver(w, r, s)
 }
 
 func (s *Engine) Run(port int) error {
-	http.HandleFunc("/soso", s.receiver)
+	http.HandleFunc("/soso", s.Receiver)
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
