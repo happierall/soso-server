@@ -62,6 +62,11 @@
 
   Router := soso.Default()
   Router.HandleRoutes(Routes)
+
+  // You can handle net/http handlers
+  http.HandleFunc("/oauth/callback/github", callbackGithub)
+
+  // And run
   Router.Run(4000)
 ```
 
@@ -92,4 +97,55 @@ http.ListenAndServe("localhost:4000", nil)
     sock.send( JSON.stringify( data ) )
 
   }
+```
+
+## Middleware and Auth
+```go
+
+import (
+  soso "github.com/happierall/soso-server"
+  jose "github.com/dvsekhvalnov/jose2go"
+)
+
+func main() {
+  Router := soso.Default()
+
+  Router.Middleware.Before(func (m *soso.Msg, start time.Time) {
+  	token, uid, err := readToken(m)
+
+    // User is blank, you can use it
+  	m.User.ID = strconv.FormatInt(uid, 10)
+  	m.User.Token = token
+  	m.User.IsAuth = true
+  })
+
+  Router.SEARCH("user", func(m *soso.Msg) {
+    if m.User.IsAuth {
+      fmt.Println(m.User.Token, m.User.ID)
+    }
+  })
+
+  Router.Run(4000)
+}
+
+
+// Example of readToken. It's may be absolutely different ;)
+func readToken(m *soso.Msg) (string, int64, error) {
+	type Other struct {
+		Token string `json:"token"` // Recommend to use "token" name
+  }
+	other := Other{}
+	err := m.ReadOther(&other)
+
+	payload, _, err := jose.Decode(other.Token, []byte("Secret_key"))
+
+	type tokenData struct {
+		UID int64
+	}
+	var td tokenData
+	json.Unmarshal([]byte(payload), &td)
+
+	return other.Token, td.UID, nil
+}
+
 ```

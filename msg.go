@@ -23,6 +23,10 @@ type Msg struct {
 
 	// Client socket session, public for testing convinience
 	Session Session
+
+	User User
+
+	Context map[string]string
 }
 
 func (c *Msg) Send() {
@@ -74,6 +78,7 @@ func newMsgFromRequest(req *Request, session Session) *Msg {
 	msg := &Msg{
 		Request: req,
 		Session: session,
+		Context: make(map[string]string),
 	}
 	msg.Response = NewResponse(msg)
 
@@ -89,8 +94,10 @@ func SendMsg(model, action string, session Session, data map[string]interface{})
 			Action: action,
 			Other:  nil,
 		},
+		Context: make(map[string]string),
+		Session: session,
 	}
-	msg.Session = session
+
 	msg.Response = NewResponse(msg)
 	msg.Response.Other = map[string]interface{}{}
 	msg.Response.Data = data

@@ -22,7 +22,8 @@ type (
 	Router struct {
 		Delay int // ms. For testing only
 
-		Routes []Route
+		Routes     []Route
+		Middleware middleware
 	}
 
 	Routes struct {
@@ -71,6 +72,8 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 
 			startTime := time.Now()
 
+			r.Middleware.beforeExecute(msg, startTime)
+
 			if r.Delay != 0 {
 				time.Sleep(time.Duration(r.Delay) * time.Millisecond)
 			}
@@ -98,6 +101,8 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 				elapsedTime,
 			)
 			found = true
+
+			r.Middleware.afterExecute(msg, elapsedTime)
 		}
 	}
 

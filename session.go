@@ -21,29 +21,29 @@ type Session interface {
 
 type SessionRepository interface {
 	//Push adds session to collection
-	Push(session Session, uid uint64) int
+	Push(session Session, uid string) int
 	//Get retries all active sessions for the user
-	Get(uid uint64) []Session
+	Get(uid string) []Session
 	//Pull removes session object from collection
 	Pull(session Session) bool
 	//Size returns count of active sessions
-	Size(uid uint64) int
+	Size(uid string) int
 }
 
 func NewSessionRepository() SessionRepository {
 	return &SessionRepositoryImpl{
-		sessions: make(map[string]uint64),
-		users:    make(map[uint64][]Session),
+		sessions: make(map[string]string),
+		users:    make(map[string][]Session),
 	}
 }
 
 type SessionRepositoryImpl struct {
 	sync.Mutex
-	sessions map[string]uint64
-	users    map[uint64][]Session
+	sessions map[string]string
+	users    map[string][]Session
 }
 
-func (s *SessionRepositoryImpl) Push(session Session, uid uint64) int {
+func (s *SessionRepositoryImpl) Push(session Session, uid string) int {
 	s.Lock()
 	defer s.Unlock()
 	fmt.Println(fmt.Sprintf("Push session %s for user %v", session.ID(), uid))
@@ -59,7 +59,7 @@ func (s *SessionRepositoryImpl) Push(session Session, uid uint64) int {
 	return len(s.users[uid])
 }
 
-func (s *SessionRepositoryImpl) Get(uid uint64) []Session {
+func (s *SessionRepositoryImpl) Get(uid string) []Session {
 	s.Lock()
 	defer s.Unlock()
 	sessions, ok := s.users[uid]
@@ -89,7 +89,7 @@ func (s *SessionRepositoryImpl) Pull(session Session) bool {
 	return true
 }
 
-func (s *SessionRepositoryImpl) Size(uid uint64) int {
+func (s *SessionRepositoryImpl) Size(uid string) int {
 	s.Lock()
 	defer s.Unlock()
 	sessions, ok := s.users[uid]
