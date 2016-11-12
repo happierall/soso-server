@@ -1,11 +1,11 @@
 package soso
 
 import (
-	"github.com/gorilla/websocket"
 	"net/http"
-	"sync"
 	"strconv"
-	"fmt"
+	"sync"
+
+	"github.com/gorilla/websocket"
 )
 
 var WebSocketReadBufSize = 4096
@@ -21,7 +21,7 @@ func getId() string {
 }
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize: WebSocketReadBufSize,
+	ReadBufferSize:  WebSocketReadBufSize,
 	WriteBufferSize: WebSocketWriteBufSize,
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -53,9 +53,9 @@ type websocketSession struct {
 
 func newSession(req *http.Request, conn *websocket.Conn, sessionID string) *websocketSession {
 	s := &websocketSession{
-		id:  sessionID,
-		req: req,
-		conn: conn,
+		id:       sessionID,
+		req:      req,
+		conn:     conn,
 		isClosed: false,
 	}
 	return s
@@ -68,10 +68,10 @@ func (s *websocketSession) ID() string {
 func (s *websocketSession) Recv() ([]byte, error) {
 
 	mt, msg, err := s.conn.ReadMessage()
-	if (mt != websocket.TextMessage && mt != -1) {
-		fmt.Printf("Warning: only text can be sent. MsgType = %d. Msg = %s\n", mt, msg)
+	if mt != websocket.TextMessage && mt != -1 {
+		Loger.Errorf("Warning: only text can be sent. MsgType = %d. Msg = %s\n", mt, msg)
 	}
-	if (mt == -1) {
+	if mt == -1 {
 		s.Close(1, "client was closed")
 	}
 
@@ -90,6 +90,6 @@ func (s *websocketSession) Close(status uint32, reason string) error {
 	return nil
 }
 
-func(s *websocketSession) IsClosed() bool {
+func (s *websocketSession) IsClosed() bool {
 	return s.isClosed
 }

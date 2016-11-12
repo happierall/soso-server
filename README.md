@@ -36,7 +36,7 @@
 ```go
   // Add routes as list:
   var Routes = soso.Routes{}
-  Routes.Add("user", "create", UserCreate)
+  Routes.CREATE("user", UserCreate)
 
   // Handler:
   func UserCreate(m *soso.Msg) {
@@ -148,4 +148,32 @@ func readToken(m *soso.Msg) (string, int64, error) {
 	return other.Token, td.UID, nil
 }
 
+```
+
+## Events and Sessions
+```go
+  func main() {
+    Router := soso.Default()
+
+    soso.Sessions.OnOpen(func(session soso.Session) {
+      fmt.Println("Client connected")
+    })
+
+    soso.Sessions.OnClose(func(session soso.Session) {
+      fmt.Println("Client disconnected")
+    })
+
+    Router.Middleware.Before(func (m *soso.Msg, start time.Time) {
+      
+      uid := AuthUser()
+
+      if m.User.IsAuth {
+        soso.Sessions.Push(m.Session, uid)) 
+      }
+
+    })
+
+
+    Router.Run(4000)
+  }
 ```

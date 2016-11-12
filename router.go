@@ -2,7 +2,6 @@ package soso
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -53,8 +52,7 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 	req, err := NewRequest(data)
 
 	if err != nil {
-		fmt.Printf("%s Error: incorrect request - %s\n", logPrefix, data)
-		fmt.Println(err)
+		Loger.Errorf("%s Error: incorrect request - %s\n%s", logPrefix, data, err)
 		return
 	}
 
@@ -79,7 +77,7 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 			}
 
 			if session.IsClosed() {
-				fmt.Printf("%s %s | %s -> %s | %s\n",
+				Loger.Infof("%s %s | %s -> %s | %s\n",
 					logPrefix,
 					time.Now().Format("2006/01/02 - 15:04:05"),
 					color.RedString(req.Model),
@@ -93,7 +91,7 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 
 			elapsedTime := time.Since(startTime)
 
-			fmt.Printf("%s %s | %s -> %s | %s\n",
+			Loger.Infof("%s %s | %s -> %s | %s\n",
 				logPrefix,
 				startTime.Format("2006/01/02 - 15:04:05"),
 				color.YellowString(req.Model),
@@ -107,7 +105,7 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 	}
 
 	if found != true {
-		fmt.Printf("%s %s | %s -> %s | %s\n",
+		Loger.Infof("%s %s | %s -> %s | %s\n",
 			logPrefix,
 			time.Now().Format("2006/01/02 - 15:04:05"),
 			color.RedString(req.Model),
@@ -119,7 +117,7 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 
 }
 
-func (r *Routes) Add(model, action string, handler HandlerFunc) {
+func (r *Routes) Handle(model, action string, handler HandlerFunc) {
 	route := Route{
 		Model:   model,
 		Action:  action,

@@ -2,7 +2,6 @@ package soso
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 )
 
@@ -21,12 +20,13 @@ type Msg struct {
 	Request  *Request
 	Response *Response
 
-	// Client socket session, public for testing convinience
+	User    User
+	Context map[string]string
+
+	// Client socket session
 	Session Session
 
-	User User
-
-	Context map[string]string
+	Router *Engine
 }
 
 func (c *Msg) Send() {
@@ -65,12 +65,12 @@ func (m *Msg) ReadOther(object interface{}) error {
 func (c *Msg) sendJSON(data interface{}) {
 	json_data, err := json.Marshal(data)
 	if err != nil {
-		fmt.Println(err)
+		Loger.Error(err)
 	}
 
 	err2 := c.Session.Send(string(json_data))
 	if err2 != nil {
-		fmt.Println("Error send msg:", err2)
+		Loger.Errorf("Error send msg:", err2)
 	}
 }
 

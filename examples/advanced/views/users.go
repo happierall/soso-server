@@ -3,11 +3,11 @@ package views
 import soso "github.com/happierall/soso-server"
 
 func init() {
-	Routes.Add("user", "get", UserGet)
-	Routes.Add("user", "create", UserCreate)
+	Routes.GET("user", userGet)
+	Routes.CREATE("user", userCreate)
 }
 
-func UserGet(m *soso.Msg) {
+func userGet(m *soso.Msg) {
 
 	type Data struct {
 		ID int64 `json:"id"`
@@ -22,7 +22,7 @@ func UserGet(m *soso.Msg) {
 
 }
 
-func UserCreate(m *soso.Msg) {
+func userCreate(m *soso.Msg) {
 
 	m.Success(map[string]interface{}{
 		"message": "message hi",

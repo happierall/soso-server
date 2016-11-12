@@ -3,12 +3,22 @@ package soso
 import (
 	"fmt"
 	"net/http"
+
+	log "github.com/Sirupsen/logrus"
+)
+
+var (
+	Loger = log.New()
 )
 
 const (
-	Version   string = "3.0.0"
+	Version   string = "3.1.0"
 	logPrefix string = "[SoSo]"
 )
+
+func init() {
+	Loger.Level = log.InfoLevel
+}
 
 /*
 	ToDo
@@ -20,15 +30,10 @@ const (
 
 type Engine struct {
 	Router
-
-	OnOpen  func(Session)
-	OnClose func(Session)
 }
 
 func (s *Engine) RunReceiver(session Session) {
-	if s.OnOpen != nil {
-		s.OnOpen(session)
-	}
+	Sessions.OnOpenExecute(session)
 
 	// Process incoming messages
 	for {
@@ -39,10 +44,7 @@ func (s *Engine) RunReceiver(session Session) {
 		break
 	}
 
-	if s.OnClose != nil {
-		fmt.Println("close onClose")
-		s.OnClose(session)
-	}
+	Sessions.OnCloseExecute(session)
 }
 
 func (s *Engine) Receiver(w http.ResponseWriter, r *http.Request) {
@@ -63,4 +65,12 @@ func New() *Engine {
 
 func Default() *Engine {
 	return New()
+}
+
+func EnableDebug() {
+	Loger.Level = log.DebugLevel
+}
+
+func DisableDebug() {
+	Loger.Level = log.InfoLevel
 }
