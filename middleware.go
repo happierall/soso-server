@@ -3,26 +3,26 @@ package soso
 import "time"
 
 type middleware struct {
-	before func(*Msg, time.Time)
-	after  func(*Msg, time.Duration)
+	beforeList []func(*Msg, time.Time)
+	afterList  []func(*Msg, time.Duration)
 }
 
 func (mw *middleware) Before(handler func(m *Msg, startTime time.Time)) {
-	mw.before = handler
+	mw.beforeList = append(mw.beforeList, handler)
 }
 
 func (mw *middleware) After(handler func(m *Msg, elapsed time.Duration)) {
-	mw.after = handler
+	mw.afterList = append(mw.afterList, handler)
 }
 
 func (mw *middleware) beforeExecute(m *Msg, startTime time.Time) {
-	if mw.before != nil {
-		mw.before(m, startTime)
+	for _, handler := range mw.beforeList {
+		handler(m, startTime)
 	}
 }
 
 func (mw *middleware) afterExecute(m *Msg, elapsed time.Duration) {
-	if mw.after != nil {
-		mw.after(m, elapsed)
+	for _, handler := range mw.afterList {
+		handler(m, elapsed)
 	}
 }
