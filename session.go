@@ -44,8 +44,8 @@ type SessionListImpl struct {
 	sessions map[string]string
 	users    map[string][]Session
 
-	onOpen  func(Session)
-	onClose func(Session)
+	onOpenList  []func(Session)
+	onCloseList []func(Session)
 }
 
 func NewSessionList() SessionList {
@@ -112,26 +112,26 @@ func (s *SessionListImpl) Size(uid string) int {
 }
 
 func (s *SessionListImpl) OnOpen(handler func(session Session)) {
-	s.onOpen = handler
+	s.onOpenList = append(s.onOpenList, handler)
 }
 
 func (s *SessionListImpl) OnClose(handler func(session Session)) {
-	s.onClose = handler
+	s.onCloseList = append(s.onCloseList, handler)
 }
 
 // OnOpenExecute Execute open handler
 // Use if custom SessionList
 func (s *SessionListImpl) OnOpenExecute(session Session) {
-	if s.onOpen != nil {
-		s.onOpen(session)
+	for _, handler := range s.onOpenList {
+		handler(session)
 	}
 }
 
 // OnCloseExecute Execute close handler and pull session from list
 // Use if custom SessionList
 func (s *SessionListImpl) OnCloseExecute(session Session) {
-	if s.onClose != nil {
-		s.onClose(session)
-		s.Pull(session)
+	for _, handler := range s.onCloseList {
+		handler(session)
 	}
+	s.Pull(session)
 }
