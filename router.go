@@ -52,7 +52,7 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 	req, err := NewRequest(data)
 
 	if err != nil {
-		Loger.Errorf("%s Error: incorrect request - %s\n%s", logPrefix, data, err)
+		Loger.Errorf("incorrect request - %s\n%s", data, err)
 		return
 	}
 
@@ -77,8 +77,7 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 			}
 
 			if session.IsClosed() {
-				Loger.Infof("%s %s | %s -> %s | %s\n",
-					logPrefix,
+				Loger.Logf("%s | %s -> %s | %s\n",
 					time.Now().Format("2006/01/02 - 15:04:05"),
 					color.RedString(req.Model),
 					color.GreenString(req.Action),
@@ -91,9 +90,8 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 
 			elapsedTime := time.Since(startTime)
 
-			Loger.Infof("%s %s | %s -> %s | %s\n",
-				logPrefix,
-				startTime.Format("2006/01/02 - 15:04:05"),
+			Loger.Printf("%s | %s -> %s | %s\n",
+				time.Now().Format("2006/01/02 - 15:04:05"),
 				color.YellowString(req.Model),
 				color.GreenString(req.Action),
 				elapsedTime,
@@ -105,8 +103,7 @@ func (r *Router) processIncomingMsg(session Session, data []byte) {
 	}
 
 	if found != true {
-		Loger.Infof("%s %s | %s -> %s | %s\n",
-			logPrefix,
+		Loger.Logf("%s | %s -> %s | %s\n",
 			time.Now().Format("2006/01/02 - 15:04:05"),
 			color.RedString(req.Model),
 			color.GreenString(req.Action),

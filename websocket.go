@@ -69,7 +69,7 @@ func (s *websocketSession) Recv() ([]byte, error) {
 
 	mt, msg, err := s.conn.ReadMessage()
 	if mt != websocket.TextMessage && mt != -1 {
-		Loger.Errorf("Warning: only text can be sent. MsgType = %d. Msg = %s\n", mt, msg)
+		Loger.Warnf("only text can be sent. MsgType = %d. Msg = %s\n", mt, msg)
 	}
 	if mt == -1 {
 		s.Close(1, "client was closed")

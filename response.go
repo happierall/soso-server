@@ -41,7 +41,7 @@ type Response struct {
 
 func NewResponse(msg *Msg) *Response {
 	return &Response{
-		Action: reverse_action_type(msg.Request.Action),
+		Action: reverseActionType(msg.Request.Action),
 		Model:  msg.Request.Model,
 		Other:  msg.Request.Other,
 	}

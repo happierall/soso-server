@@ -58,7 +58,7 @@ func NewSessionList() SessionList {
 func (s *SessionListImpl) Push(session Session, uid string) int {
 	s.Lock()
 	defer s.Unlock()
-	Loger.Debugf("%s Push session %s for user %v", logPrefix, session.ID(), uid)
+	Loger.Debugf("Push session %s for user %v", session.ID(), uid)
 	sessions, ok := s.users[uid]
 	if !ok {
 		sessions = make([]Session, 0)
@@ -67,7 +67,7 @@ func (s *SessionListImpl) Push(session Session, uid string) int {
 		s.users[uid] = append(sessions, session)
 		s.sessions[session.ID()] = uid
 	}
-	Loger.Debugf("%s Session %s for user %v pushed, total %v", logPrefix, session.ID(), uid, len(s.users[uid]))
+	Loger.Debugf("Session %s for user %v pushed, total %v", session.ID(), uid, len(s.users[uid]))
 	return len(s.users[uid])
 }
 
@@ -88,7 +88,7 @@ func (s *SessionListImpl) Pull(session Session) bool {
 	if !ok {
 		return false
 	}
-	Loger.Debugf("%s Pull session %s for user %v", logPrefix, session.ID(), uid)
+	Loger.Debugf("Pull session %s for user %v", session.ID(), uid)
 	var found int
 	for key, value := range s.users[uid] {
 		if value.ID() == session.ID() {
@@ -97,7 +97,7 @@ func (s *SessionListImpl) Pull(session Session) bool {
 	}
 	s.users[uid] = append(s.users[uid][:found], s.users[uid][found+1:]...)
 	delete(s.sessions, session.ID())
-	Loger.Debugf("%s Session %s for user %v pulled, total %v", logPrefix, session.ID(), uid, len(s.users[uid]))
+	Loger.Debugf("Session %s for user %v pulled, total %v", session.ID(), uid, len(s.users[uid]))
 	return true
 }
 

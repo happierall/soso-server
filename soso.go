@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"net/http"
 
-	log "github.com/Sirupsen/logrus"
+	"github.com/happierall/l"
 )
 
 var (
-	Loger = log.New()
+	Loger = l.New()
 )
 
 const (
-	Version   string = "3.1.0"
-	logPrefix string = "[SoSo]"
+	Version string = "3.2.0"
 )
 
 func init() {
-	Loger.Level = log.InfoLevel
+	Loger.Prefix = l.Colorize("SoSo ", l.LightPink)
+	Loger.Level = l.LevelInfo
 }
 
 /*
@@ -68,9 +68,9 @@ func Default() *Engine {
 }
 
 func EnableDebug() {
-	Loger.Level = log.DebugLevel
+	Loger.Level = l.LevelDebug
 }
 
 func DisableDebug() {
-	Loger.Level = log.InfoLevel
+	Loger.Level = l.LevelInfo
 }

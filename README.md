@@ -1,8 +1,9 @@
 # Soso server (Go)
 ### Comfortable, fast, bidirectional protocol over websocket instead REST
 
-## Client lib
+### Additional libs
 [soso-client](https://github.com/happierall/soso-client)
+[soso-auth](https://github.com/happierall/soso-auth)
 
 ##Install
 ```
@@ -117,6 +118,7 @@ func main() {
   	m.User.ID = strconv.FormatInt(uid, 10)
   	m.User.Token = token
   	m.User.IsAuth = true
+  	m.User.IsAnonymous = true
   })
 
   Router.SEARCH("user", func(m *soso.Msg) {
@@ -128,27 +130,6 @@ func main() {
   Router.Run(4000)
 }
 
-
-// Example of readToken. It's may be absolutely different ;)
-func readToken(m *soso.Msg) (string, int64, error) {
-	type Other struct {
-		Token string `json:"token"` // Recommend to use "token" name
-  }
-	other := Other{}
-	err := m.ReadOther(&other)
-
-	payload, _, err := jose.Decode(other.Token, []byte("Secret_key"))
-
-	type tokenData struct {
-		UID int64
-	}
-	var td tokenData
-	json.Unmarshal([]byte(payload), &td)
-
-	return other.Token, td.UID, nil
-}
-
-```
 
 ## Events and Sessions
 ```go

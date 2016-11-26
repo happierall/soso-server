@@ -31,7 +31,7 @@ type Msg struct {
 
 func (c *Msg) Send() {
 	if c.Response.Log.LogID == "0" {
-		c.Response.NewLog(log_code_by_action_type(c.Request.Action), LevelInfo, "")
+		c.Response.NewLog(logCodeByActionType(c.Request.Action), LevelInfo, "")
 	}
 	c.sendJSON(c.Response)
 }
@@ -43,7 +43,7 @@ func (c *Msg) Error(code int, level Level, err error) {
 
 func (c *Msg) Success(Data interface{}) {
 	c.Response.Data = Data
-	c.Response.NewLog(log_code_by_action_type(c.Request.Action), LevelInfo, "")
+	c.Response.NewLog(logCodeByActionType(c.Request.Action), LevelInfo, "")
 
 	c.sendJSON(c.Response)
 }
@@ -66,11 +66,13 @@ func (c *Msg) sendJSON(data interface{}) {
 	json_data, err := json.Marshal(data)
 	if err != nil {
 		Loger.Error(err)
+		return
 	}
 
 	err2 := c.Session.Send(string(json_data))
 	if err2 != nil {
 		Loger.Errorf("Error send msg:", err2)
+		return
 	}
 }
 
@@ -105,7 +107,7 @@ func SendMsg(model, action string, session Session, data map[string]interface{})
 	msg.Send()
 }
 
-func reverse_action_type(action string) string {
+func reverseActionType(action string) string {
 	act, ok := actions[action]
 	if !ok {
 		act = strings.ToUpper(action)
@@ -113,7 +115,7 @@ func reverse_action_type(action string) string {
 	return act
 }
 
-func log_code_by_action_type(action string) int {
+func logCodeByActionType(action string) int {
 	if action == "create" {
 		return 201
 	}
