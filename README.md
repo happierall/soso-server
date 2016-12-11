@@ -129,12 +129,13 @@ func main() {
 
   Router.Run(4000)
 }
+```
 
 
 ## Events and Sessions
 
 ```go
-func main() {
+  func main() {
     Router := soso.Default()
 
     soso.Sessions.OnOpen(func(session soso.Session) {
@@ -157,5 +158,5 @@ func main() {
 
 
     Router.Run(4000)
-}
+  }
 ```
