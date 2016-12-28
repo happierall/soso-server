@@ -16,7 +16,6 @@ const (
 )
 
 func init() {
-	Loger.Prefix = l.Colorize("SoSo ", l.LightPink)
 	Loger.Level = l.LevelInfo
 }
 
