@@ -21,6 +21,8 @@ type SessionList interface {
 	Push(session Session, uid string) int
 	// Get retries all active sessions for the user
 	Get(uid string) []Session
+	// Get UID - user id by session
+	GetUID(session Session) (uid string, exists bool)
 	// Pull removes session object from collection
 	Pull(session Session) bool
 	// Size returns count of active sessions
@@ -79,6 +81,14 @@ func (s *SessionListImpl) Get(uid string) []Session {
 		sessions = make([]Session, 0)
 	}
 	return sessions
+}
+
+func (s *SessionListImpl) GetUID(session Session) (string, bool) {
+	s.Lock()
+	defer s.Unlock()
+
+	uid, exists := s.sessions[session.ID()]
+	return uid, exists
 }
 
 func (s *SessionListImpl) Pull(session Session) bool {
