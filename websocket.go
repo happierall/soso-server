@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/iris-contrib/errors"
 )
 
 var WebSocketReadBufSize = 4096
@@ -62,6 +63,9 @@ func newSession(req *http.Request, conn *websocket.Conn, sessionID string) *webs
 }
 
 func (s *websocketSession) ID() string {
+	s.RLock()
+	defer s.RUnlock()
+
 	return s.id
 }
 
@@ -81,15 +85,22 @@ func (s *websocketSession) Recv() ([]byte, error) {
 func (s *websocketSession) Send(msg string) error {
 	s.Lock()
 	defer s.Unlock()
+	if s.isClosed {
+		return errors.New("Session already closed")
+	}
 	return s.conn.WriteMessage(websocket.TextMessage, []byte(msg))
 }
 
 func (s *websocketSession) Close(status uint32, reason string) error {
+	s.Lock()
+	defer s.Unlock()
 	s.isClosed = true
 	s.conn.Close()
 	return nil
 }
 
 func (s *websocketSession) IsClosed() bool {
+	s.RLock()
+	defer s.RUnlock()
 	return s.isClosed
 }

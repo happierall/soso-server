@@ -41,7 +41,7 @@ type SessionList interface {
 }
 
 type SessionListImpl struct {
-	sync.Mutex
+	sync.RWMutex
 
 	sessions map[string]string
 	users    map[string][]Session
@@ -84,8 +84,8 @@ func (s *SessionListImpl) Get(uid string) []Session {
 }
 
 func (s *SessionListImpl) GetUID(session Session) (string, bool) {
-	s.Lock()
-	defer s.Unlock()
+	s.RLock()
+	defer s.RUnlock()
 
 	uid, exists := s.sessions[session.ID()]
 	return uid, exists
@@ -112,8 +112,8 @@ func (s *SessionListImpl) Pull(session Session) bool {
 }
 
 func (s *SessionListImpl) Size(uid string) int {
-	s.Lock()
-	defer s.Unlock()
+	s.RLock()
+	defer s.RUnlock()
 	sessions, ok := s.users[uid]
 	if !ok {
 		return 0
@@ -140,6 +140,7 @@ func (s *SessionListImpl) OnOpenExecute(session Session) {
 // OnCloseExecute Execute close handler and pull session from list
 // Use if custom SessionList
 func (s *SessionListImpl) OnCloseExecute(session Session) {
+
 	for _, handler := range s.onCloseList {
 		handler(session)
 	}
