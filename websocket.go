@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
-	"github.com/iris-contrib/errors"
+	"errors"
 )
 
 var WebSocketReadBufSize = 4096
