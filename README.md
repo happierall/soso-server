@@ -160,3 +160,6 @@ func main() {
     Router.Run(4000)
   }
 ```
+
+### License
+[MIT](http://opensource.org/licenses/MIT)
