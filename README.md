@@ -1,5 +1,5 @@
-# Soso server (Go)
-### Comfortable, fast, bidirectional protocol over websocket instead REST
+# Golang WebSocket Framework
+### Soso-server
 
 ### Additional libs
 [soso-client](https://github.com/happierall/soso-client)
