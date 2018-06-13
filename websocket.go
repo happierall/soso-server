@@ -19,9 +19,12 @@ var (
 	WebSocketReadBufSize  = 1024
 	WebSocketWriteBufSize = 1024
 
-	WriteWait               = 10 * time.Second            // Milliseconds until write times out.
-	PongWait                = 60 * time.Second            // Timeout for waiting on pong.
-	PingPeriod              = (60 * time.Second * 9) / 10 // Milliseconds between pings.
+	WriteWait = 10 * time.Second // Milliseconds until write times out.
+	PongWait  = 60 * time.Second  // Timeout for waiting on pong.
+
+	// Send pings to peer with this period. Must be less than pongWait.
+	PingPeriod = (PongWait * 9) / 10 // Milliseconds between pings.
+
 	MaxMessageSize    int64 = 512
 	MessageBufferSize       = 256
 )
@@ -93,6 +96,7 @@ func (s *websocketSession) ID() string {
 func (s *websocketSession) Recv() ([]byte, error) {
 	s.conn.SetReadLimit(MaxMessageSize)
 	s.conn.SetReadDeadline(time.Now().Add(PongWait))
+	s.conn.SetPongHandler(func(string) error { s.conn.SetReadDeadline(time.Now().Add(PongWait)); return nil })
 
 	mt, msg, err := s.conn.ReadMessage()
 	if mt != websocket.TextMessage && mt != -1 {
