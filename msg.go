@@ -71,7 +71,7 @@ func (c *Msg) sendJSON(data interface{}) {
 
 	err2 := c.Session.Send(string(json_data))
 	if err2 != nil {
-		Loger.Errorf("Error send msg:", err2)
+		Loger.Warnf("Error send msg:", err2)
 		return
 	}
 }
@@ -103,6 +103,23 @@ func SendMsg(model, action string, session Session, data map[string]interface{})
 	msg.Response = NewResponse(msg)
 	msg.Response.Other = map[string]interface{}{}
 	msg.Response.Data = data
+
+	msg.Send()
+}
+
+func SendError(model, action string, session Session, levelInt int, levelStr Level, userMsg string) {
+	msg := &Msg{
+		Request: &Request{
+			Model:  model,
+			Action: action,
+			Other:  nil,
+		},
+		Context: make(map[string]string),
+		Session: session,
+	}
+
+	msg.Response = NewResponse(msg)
+	msg.Response.NewLog(levelInt, levelStr, userMsg)
 
 	msg.Send()
 }

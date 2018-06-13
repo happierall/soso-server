@@ -20,12 +20,12 @@ var (
 	WebSocketWriteBufSize = 1024
 
 	WriteWait = 10 * time.Second // Milliseconds until write times out.
-	PongWait  = 60 * time.Second  // Timeout for waiting on pong.
+	PongWait  = 60 * time.Second // Timeout for waiting on pong.
 
 	// Send pings to peer with this period. Must be less than pongWait.
 	PingPeriod = (PongWait * 9) / 10 // Milliseconds between pings.
 
-	MaxMessageSize    int64 = 512
+	MaxMessageSize    int64 = 1024 * 1024
 	MessageBufferSize       = 256
 )
 
@@ -103,8 +103,13 @@ func (s *websocketSession) Recv() ([]byte, error) {
 		Loger.Warnf("only text can be sent. MsgType = %d. Msg = %s\n", mt, msg)
 		return nil, errors.New("only text can be sent")
 	}
+
 	if mt == -1 {
 		s.close(1, "client was closed")
+	}
+
+	if err == websocket.ErrReadLimit {
+		Loger.Warnf("ErrReadLimit %fKB", float64(MaxMessageSize) / 1024)
 	}
 
 	return msg, err
