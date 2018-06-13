@@ -1,6 +1,6 @@
 package views
 
-import soso "github.com/happierall/soso-server"
+import soso "../../.."
 
 func init() {
 	Routes.GET("user", userGet)

@@ -19,20 +19,13 @@ func init() {
 	Loger.Level = l.LevelInfo
 }
 
-/*
-	ToDo
-	1. Add protobuf support
-	2. Add save session to soso_test
-	3. Auth and save soso_test configs in my server for other users
-
-*/
-
 type Engine struct {
 	Router
 }
 
 func (s *Engine) RunReceiver(session Session) {
 	Sessions.OnOpenExecute(session)
+
 
 	// Process incoming messages
 	for {

@@ -3,6 +3,7 @@ package soso
 import (
 	"net/http"
 	"strconv"
+	"sync"
 )
 
 type Level int64
@@ -27,7 +28,8 @@ const (
 )
 
 var (
-	LastLogID int = 1
+	lastLogMux     = sync.RWMutex{}
+	LastLogID  int = 1
 )
 
 var levels = [...]string{
@@ -55,6 +57,9 @@ type Log struct {
 }
 
 func NewLog(code_key int, lvl_str Level, user_msg string) Log {
+	lastLogMux.Lock()
+	defer lastLogMux.Unlock()
+
 	LastLogID++
 
 	return Log{

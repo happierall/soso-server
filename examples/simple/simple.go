@@ -3,14 +3,16 @@ package main
 import (
 	"fmt"
 
-	soso "github.com/happierall/soso-server"
+	soso "../.."
 )
 
 func main() {
 
+	soso.EnableDebug()
+
 	Router := soso.Default()
 
-	Router.CREATE("message", func(m *soso.Msg) {
+	Router.CREATE("user", func(m *soso.Msg) {
 		m.Success(map[string]interface{}{
 			"id": 1,
 		})

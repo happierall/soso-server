@@ -1,5 +1,5 @@
 package views
 
-import soso "github.com/happierall/soso-server"
+import soso "../../.."
 
 var Routes = soso.Routes{}
