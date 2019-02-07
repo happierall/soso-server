@@ -53,7 +53,7 @@ var upgrader = websocket.Upgrader{
 func SosoWebsocketReceiver(rw http.ResponseWriter, req *http.Request, engine *Engine) {
 	conn, err := upgrader.Upgrade(rw, req, nil)
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
+		Loger.Errorf("can't upgrade ws:  %s", err)
 		return
 	}
 	sessID := getId()
