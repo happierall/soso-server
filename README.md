@@ -1,4 +1,4 @@
-# Golang WebSocket Framework
+# Golang WebSocket Framework (Warning! Not maintained)
 ### Soso-server
 
 ### Additional libs
